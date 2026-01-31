@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { api } from '../lib/api';
 
 export default function Navbar() {
-    const [role, setRole] = useState<'ADMIN' | 'SELLER' | 'CUSTOMER' | null>(null);
+    const [role, setRole] = useState<'ADMIN' | 'SELLER' | 'CUSTOMER' | null>('ADMIN');
     const [user, setUser] = useState<any>(null);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const router = useRouter();
