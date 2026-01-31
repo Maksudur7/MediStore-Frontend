@@ -34,34 +34,43 @@ export const api = {
         register: (userData: any) =>
             baseRequest('/auth/register', { method: 'POST', body: JSON.stringify(userData) }),
 
-        getProfile: () =>
-            baseRequest('/auth/profile'),
+        getProfile: async () => {
+            const token = localStorage.getItem('token');
+            const res = await fetch(`${BASE_URL}/user`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                }
+            });
+            return res.json();
+        }
     },
 
-    categories: {
-        getAll: () =>
-            baseRequest('/categories'),
+    // categories: {
+    //     getAll: () =>
+    //         baseRequest('/categories'),
 
-        getById: (id: string) =>
-            baseRequest(`/categories/${id}`),
-    },
+    //     getById: (id: string) =>
+    //         baseRequest(`/categories/${id}`),
+    // },
 
-    medicines: {
-        getAll: () =>
-            baseRequest('/medicines'),
+    // medicines: {
+    //     getAll: () =>
+    //         baseRequest('/medicines'),
 
-        getById: (id: string) =>
-            baseRequest(`/medicines/${id}`),
+    //     getById: (id: string) =>
+    //         baseRequest(`/medicines/${id}`),
 
-        getByCategory: (categoryName: string) =>
-            baseRequest(`/medicines?category=${categoryName}`),
-    },
+    //     getByCategory: (categoryName: string) =>
+    //         baseRequest(`/medicines?category=${categoryName}`),
+    // },
 
-    orders: {
-        create: (orderData: any) =>
-            baseRequest('/orders', { method: 'POST', body: JSON.stringify(orderData) }),
+    // orders: {
+    //     create: (orderData: any) =>
+    //         baseRequest('/orders', { method: 'POST', body: JSON.stringify(orderData) }),
 
-        getMyOrders: () =>
-            baseRequest('/orders/my-orders'),
-    }
+    //     getMyOrders: () =>
+    //         baseRequest('/orders/my-orders'),
+    // }
 };
