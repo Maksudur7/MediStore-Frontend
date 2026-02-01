@@ -123,6 +123,39 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     };
 
+    const getAllUsers = async () => {
+        try {
+            const res = await api?.users?.getAll();
+            console.log(" all users data ", res);
+            return res;
+        }
+        catch (err: any) {
+            console.error("Fetch Users Error:", err);
+            return [];
+        }
+    };
+
+    const updateUserRole = async (id: string, updates: { role?: string; status?: boolean }) => {
+        try {
+            console.log(id, updates)
+            const response = await api.users.updateUserByAdmin(id, updates);
+            return response;
+        } catch (error: any) {
+            throw new Error(error.message || "Failed to update user");
+        }
+    };
+
+    const deleteUser = async (id: string) => {
+        try {
+            const res = await api.users.delete(id);
+            return res.data;
+        }
+        catch (err: any) {
+            console.error("Delete User Error:", err);
+            return null;
+        }
+    }
+
     return (
         <AuthContext.Provider value={{
             user,
@@ -133,8 +166,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             getAllCategories,
             postACategory,
             updateACategory,
-            deleteACategory
-
+            deleteACategory,
+            getAllUsers,
+            updateUserRole,
+            deleteUser
         }}>
             {children}
         </AuthContext.Provider>

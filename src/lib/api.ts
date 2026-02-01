@@ -56,6 +56,19 @@ export const api = {
             baseRequest(`/category/${id}`, { method: 'DELETE' }),
     },
 
+    users: {
+        getAll: () => baseRequest('/user', { method: 'GET' }),
+
+        updateUserByAdmin: (id: string, updates: { role?: string; status?: boolean }) =>
+            baseRequest(`/user/${id}/role`, {
+                method: 'PATCH',
+                body: JSON.stringify(updates)
+            }),
+        delete: (id: string) =>
+            baseRequest(`/user/${id}`, { method: 'DELETE' }),
+
+    },
+
     // medicines: {
     //     getAll: () =>
     //         baseRequest('/medicines'),
