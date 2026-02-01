@@ -188,6 +188,39 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     }
 
+    const getMedicines = async () => {
+        try {
+            const res = await api.medicines.getAll();
+            return res;
+        }
+        catch (err: any) {
+            console.error("Fetch Medicines Error:", err);
+            return [];
+        }
+    };
+
+    const updateMedicines = async (id: string, updates: any) => {
+        try {
+            const res = await api.medicines.update(id, updates);
+            console.log("Update Medicine Response:", res);
+            return res;
+        } catch (err: any) {
+            console.error("Update Medicine Error:", err);
+            return null;
+        }
+    };
+
+    const deletMedicines = async (id: string) => {
+        try {
+            const res = await api.medicines.delete(id);
+            console.log(res);
+            return res;
+        } catch (err: any) {
+            console.error("Delete Medicine Error:", err);
+            return null;
+        }
+    };
+
     return (
         <AuthContext.Provider value={{
             user,
@@ -204,7 +237,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             deleteUser,
             getAdminStats,
             getSellerStats,
-            postMedicine
+            postMedicine,
+            getMedicines,
+            updateMedicines,
+            deletMedicines,
         }}>
             {children}
         </AuthContext.Provider>

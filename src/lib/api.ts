@@ -1,5 +1,3 @@
-import { create } from "domain";
-
 const BASE_URL = process.env.BASE_URL || 'http://localhost:5000';
 
 const baseRequest = async (endpoint: string, options: RequestInit = {}) => {
@@ -78,7 +76,7 @@ export const api = {
 
     medicines: {
         getAll: () =>
-            baseRequest('/medicines'),
+            baseRequest('/medicines', { method: 'GET' }),
         create: (medicineData: any) =>
             baseRequest('/medicines', { method: 'POST', body: JSON.stringify(medicineData) }),
 
@@ -87,13 +85,13 @@ export const api = {
 
         getByCategory: (categoryName: string) =>
             baseRequest(`/medicines?category=${categoryName}`),
+        update: (id: string, updates: any) =>
+            baseRequest(`/medicines/${id}`, {
+                method: 'PATCH',
+                body: JSON.stringify(updates)
+            }),
+        delete: (id: string) =>
+            baseRequest(`/medicines/${id}`, { method: 'DELETE' }),
     },
 
-    // orders: {
-    //     create: (orderData: any) =>
-    //         baseRequest('/orders', { method: 'POST', body: JSON.stringify(orderData) }),
-
-    //     getMyOrders: () =>
-    //         baseRequest('/orders/my-orders'),
-    // }
 };
