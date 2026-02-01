@@ -68,6 +68,9 @@ export const api = {
             baseRequest(`/user/${id}`, { method: 'DELETE' }),
 
     },
+    admin: {
+        getStats: () => baseRequest('/user/admin/stats', { method: 'GET' }),
+    }
 
     // medicines: {
     //     getAll: () =>

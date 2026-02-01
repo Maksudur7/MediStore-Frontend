@@ -156,6 +156,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     }
 
+    const getAdminStats = async () => {
+        try {
+            const res = await api.admin.getStats();
+            console.log('getAdmin data', res);
+            return res;
+        } catch (err: any) {
+            console.error("Fetch Admin Stats Error:", err);
+            return null;
+        }
+    };
+
     return (
         <AuthContext.Provider value={{
             user,
@@ -169,7 +180,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             deleteACategory,
             getAllUsers,
             updateUserRole,
-            deleteUser
+            deleteUser,
+            getAdminStats
         }}>
             {children}
         </AuthContext.Provider>
