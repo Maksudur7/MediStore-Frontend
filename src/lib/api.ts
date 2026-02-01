@@ -1,3 +1,4 @@
+import { create } from "domain";
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:5000';
 
@@ -70,18 +71,23 @@ export const api = {
     },
     admin: {
         getStats: () => baseRequest('/user/admin/stats', { method: 'GET' }),
-    }
+    },
+    seller: {
+        getStats: () => baseRequest('/user/seller/stats', { method: 'GET' }),
+    },
 
-    // medicines: {
-    //     getAll: () =>
-    //         baseRequest('/medicines'),
+    medicines: {
+        getAll: () =>
+            baseRequest('/medicines'),
+        create: (medicineData: any) =>
+            baseRequest('/medicines', { method: 'POST', body: JSON.stringify(medicineData) }),
 
-    //     getById: (id: string) =>
-    //         baseRequest(`/medicines/${id}`),
+        getById: (id: string) =>
+            baseRequest(`/medicines/${id}`),
 
-    //     getByCategory: (categoryName: string) =>
-    //         baseRequest(`/medicines?category=${categoryName}`),
-    // },
+        getByCategory: (categoryName: string) =>
+            baseRequest(`/medicines?category=${categoryName}`),
+    },
 
     // orders: {
     //     create: (orderData: any) =>

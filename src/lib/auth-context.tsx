@@ -167,6 +167,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     };
 
+    const getSellerStats = async () => {
+        try {
+            const res = await api.seller.getStats();
+            return res;
+        } catch (err: any) {
+            console.error("Fetch Seller Stats Error:", err);
+            return null;
+        }
+    }
+
+    const postMedicine = async (medicineData: any) => {
+        try {
+            const res = await api.medicines.create(medicineData);
+            console.log('post medicine data', res);
+            return res;
+        } catch (err: any) {
+            console.error("Post Medicine Error:", err);
+            return null;
+        }
+    }
+
     return (
         <AuthContext.Provider value={{
             user,
@@ -181,7 +202,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             getAllUsers,
             updateUserRole,
             deleteUser,
-            getAdminStats
+            getAdminStats,
+            getSellerStats,
+            postMedicine
         }}>
             {children}
         </AuthContext.Provider>
