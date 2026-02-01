@@ -25,7 +25,7 @@ export default function CategoryModal({ isOpen, onClose, onSave, initialData }: 
         try {
             let res;
             if (initialData) {
-                res = await updateACategory(initialData._id, { name });
+                res = await updateACategory(initialData.id, { name });
             } else {
                 res = await postACategory({ name });
             }

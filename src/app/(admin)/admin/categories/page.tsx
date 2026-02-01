@@ -12,8 +12,6 @@ export default function AdminCategories() {
     const [editingCategory, setEditingCategory] = useState<any>(null);
     const {
         getAllCategories,
-        postACategory,
-        updateACategory,
         deleteACategory
     } = useAuth()
 
@@ -36,7 +34,7 @@ export default function AdminCategories() {
     }, []);
 
     const handleDelete = async (id: string) => {
-        if (!confirm("Are you sure you want to delete?")) return;
+        // if (!confirm("Are you sure you want to delete?")) return;
         try {
             const res = await deleteACategory(id);
             if (res) {

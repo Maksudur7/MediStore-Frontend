@@ -12,12 +12,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     useEffect(() => {
         const token = localStorage.getItem("token");
+        const savedUser = localStorage.getItem("user");
+
         if (token) {
+            if (savedUser) {
+                setUser(JSON.parse(savedUser));
+            }
             api.auth.getProfile()
                 .then(res => {
-                    if (res.success) setUser(res.data.user);
+                    if (res.success) {
+                        setUser(res.data.user);
+                        localStorage.setItem("user", JSON.stringify(res.data.user));
+                    }
                 })
-                .catch(() => localStorage.removeItem("token"))
+                .catch(() => logout())
                 .finally(() => setLoading(false));
         } else {
             setLoading(false);
@@ -61,8 +69,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const logout = () => {
         localStorage.removeItem("token");
+        localStorage.removeItem("user");
         setUser(null);
-        router.push("/login");
+        setLoading(false);
+        window.location.href = "/login";
     };
 
     const getAllCategories = async () => {
@@ -92,6 +102,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const updateACategory = async (id: string, categoryData: any) => {
         try {
+            console.log('update catagory', id, categoryData);
             const res = await api.categories.update(id, categoryData);
             return res.data;
         }

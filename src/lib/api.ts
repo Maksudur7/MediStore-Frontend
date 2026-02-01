@@ -48,7 +48,7 @@ export const api = {
 
         update: (id: string, data: { name: string }) =>
             baseRequest(`/category/${id}`, {
-                method: 'PUT',
+                method: 'PATCH',
                 body: JSON.stringify(data)
             }),
 
