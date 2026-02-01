@@ -34,26 +34,27 @@ export const api = {
         register: (userData: any) =>
             baseRequest('/auth/register', { method: 'POST', body: JSON.stringify(userData) }),
 
-        getProfile: async () => {
-            const token = localStorage.getItem('token');
-            const res = await fetch(`${BASE_URL}/user`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                }
-            });
-            return res.json();
-        }
+        getProfile: () => baseRequest('/user', { method: 'GET' }),
     },
 
-    // categories: {
-    //     getAll: () =>
-    //         baseRequest('/categories'),
+    categories: {
+        getAll: () => baseRequest('/category', { method: 'GET' }),
 
-    //     getById: (id: string) =>
-    //         baseRequest(`/categories/${id}`),
-    // },
+        create: (data: { name: string }) =>
+            baseRequest('/category', {
+                method: 'POST',
+                body: JSON.stringify(data)
+            }),
+
+        update: (id: string, data: { name: string }) =>
+            baseRequest(`/category/${id}`, {
+                method: 'PUT',
+                body: JSON.stringify(data)
+            }),
+
+        delete: (id: string) =>
+            baseRequest(`/category/${id}`, { method: 'DELETE' }),
+    },
 
     // medicines: {
     //     getAll: () =>

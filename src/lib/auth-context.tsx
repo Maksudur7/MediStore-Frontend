@@ -65,8 +65,66 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         router.push("/login");
     };
 
+    const getAllCategories = async () => {
+        try {
+            const res = await api?.categories?.getAll();
+            console.log(" all catagory data ", res);
+            return res;
+        }
+        catch (err: any) {
+            console.error("Fetch Categories Error:", err);
+            return [];
+        }
+    };
+
+    const postACategory = async (categoryData: any) => {
+        try {
+            console.log('catagory Data is ', categoryData);
+            const res = await api.categories.create(categoryData);
+            console.log('post Catagory', res);
+            return res.data;
+        }
+        catch (err: any) {
+            console.error("Create Category Error:", err);
+            return null;
+        }
+    };
+
+    const updateACategory = async (id: string, categoryData: any) => {
+        try {
+            const res = await api.categories.update(id, categoryData);
+            return res.data;
+        }
+        catch (err: any) {
+            console.error("Update Category Error:", err);
+            return null;
+        }
+    };
+
+    const deleteACategory = async (id: string) => {
+        try {
+            const res = await api.categories.delete(id);
+            return res.data;
+        }
+        catch (err: any) {
+            console.error("Delete Category Error:", err);
+            return null;
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ user, login, register, logout, loading  }}>
+        <AuthContext.Provider value={{
+            user,
+            login,
+            register,
+            logout,
+            loading,
+            getAllCategories,
+            postACategory,
+            updateACategory,
+            deleteACategory
+
+        }}>
             {children}
         </AuthContext.Provider>
     );

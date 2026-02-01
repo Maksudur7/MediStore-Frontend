@@ -19,7 +19,6 @@ export default function LoginPage() {
 
     try {
       const res = await login(formData);
-      console.log(res);
       if (res.success) {
         toast.success("Welcome back! Redirecting...");
       } else {

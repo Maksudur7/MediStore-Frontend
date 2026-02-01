@@ -1,47 +1,50 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Plus, Edit2, Trash2, LayoutGrid, Search } from "lucide-react";
-import { toast } from "react-hot-toast"; // npm i react-hot-toast install kora thakte hobe
+import { toast } from "react-hot-toast"; 
 import CategoryModal from "@/src/components/CategoryModal";
-import { api } from "@/src/lib/api";
+import { useAuth } from "@/src/lib/auth-context";
 
 export default function AdminCategories() {
     const [categories, setCategories] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingCategory, setEditingCategory] = useState<any>(null);
+    const {
+        getAllCategories,
+        postACategory,
+        updateACategory,
+        deleteACategory
+    } = useAuth()
 
-    // Load Categories from Backend
     const loadCategories = async () => {
         try {
             setLoading(true);
-            const res = await api.categories.getAll();
-            if (res.success) setCategories(res.data);
+            const res = await getAllCategories();
+            if (res) {
+                setCategories(res);
+            }
         } catch (err: any) {
-            toast.error(err.message);
+            toast.error("Failed to load categories");
         } finally {
             setLoading(false);
         }
     };
 
-    useEffect(() => { loadCategories(); }, []);
+    useEffect(() => {
+        loadCategories();
+    }, []);
 
-    // Create or Update Logic
-    const handleSave = async (formData: any) => {
+    const handleDelete = async (id: string) => {
+        if (!confirm("Are you sure you want to delete?")) return;
         try {
-            if (editingCategory) {
-                // Backend e update endpoint thakle api.ts e add kore nite hobe
-                // await api.categories.update(editingCategory._id, formData);
-                toast.success("Category updated!");
-            } else {
-                // Backend check: baseRequest('/categories', {method: 'POST', body: JSON.stringify(formData)})
-                // await api.categories.create(formData);
-                toast.success("Category created!");
+            const res = await deleteACategory(id);
+            if (res) {
+                toast.success("Category deleted!");
+                loadCategories();
             }
-            setIsModalOpen(false);
-            loadCategories();
-        } catch (err: any) {
-            toast.error(err.message);
+        } catch (err) {
+            toast.error("Delete failed");
         }
     };
 
@@ -75,15 +78,16 @@ export default function AdminCategories() {
                         <tbody className="divide-y divide-white/5">
                             {loading ? (
                                 <tr><td colSpan={3} className="px-10 py-20 text-center text-gray-500 animate-pulse font-bold tracking-widest uppercase">Fetching Data...</td></tr>
-                            ) : categories.map((cat) => (
+                            ) : categories.map((cat: any) => (
                                 <tr key={cat._id} className="hover:bg-white/[0.02] transition-colors group">
-                                    <td className="px-10 py-6 text-xs font-mono text-gray-500">#{cat._id.slice(-6)}</td>
+                                    <td className="px-10 py-6 text-xs font-mono text-gray-500">#{cat?.id?.slice(-6)}</td>
                                     <td className="px-10 py-6 font-bold text-lg">{cat.name}</td>
                                     <td className="px-10 py-6 text-right">
-                                        <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <div className="flex justify-end gap-3  transition-opacity">
                                             <button onClick={() => { setEditingCategory(cat); setIsModalOpen(true); }}
                                                 className="p-3 bg-white/5 border border-white/10 rounded-xl hover:text-teal-400 transition-all"><Edit2 size={16} /></button>
-                                            <button className="p-3 bg-white/5 border border-white/10 rounded-xl hover:text-red-400 transition-all"><Trash2 size={16} /></button>
+                                            <button onClick={() => handleDelete(cat.id)}
+                                             className="p-3 bg-white/5 border border-white/10 rounded-xl hover:text-red-400 transition-all"><Trash2 size={16} /></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -96,7 +100,7 @@ export default function AdminCategories() {
             <CategoryModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                onSave={handleSave}
+                onSave={loadCategories}
                 initialData={editingCategory}
             />
         </div>
