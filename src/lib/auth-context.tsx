@@ -221,6 +221,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     };
 
+    const getSellerOrders = async () => {
+        try {
+            const res = await api.orders.getSellerOrders();
+            return res;
+        } catch (err: any) {
+            console.error("Fetch Seller Orders Error:", err);
+            return null;
+        }
+    };
+
+    const updateOrderStatus = async (orderId: string, status: string) => {
+        try {
+            const res = await api.orders.updateOrderStatus(orderId, status);
+            return res;
+        } catch (err: any) {
+            console.error("Update Order Status Error:", err);
+            return null;
+        }
+    };
+
     return (
         <AuthContext.Provider value={{
             user,
@@ -241,6 +261,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             getMedicines,
             updateMedicines,
             deletMedicines,
+            getSellerOrders,
+            updateOrderStatus
         }}>
             {children}
         </AuthContext.Provider>

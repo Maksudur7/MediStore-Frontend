@@ -94,4 +94,14 @@ export const api = {
             baseRequest(`/medicines/${id}`, { method: 'DELETE' }),
     },
 
+    orders: {
+        getSellerOrders: () =>
+            baseRequest('/orders/seller', { method: 'GET' }),
+        updateOrderStatus: (orderId: string, status: string) =>
+            baseRequest(`/orders/${orderId}/status`, {
+                method: 'PATCH',
+                body: JSON.stringify({ status })
+            }),
+    },
+
 };
