@@ -1,4 +1,4 @@
-const BASE_URL = process.env.BASE_URL || 'http://localhost:5000';
+const BASE_URL = process.env.BASE_URL || 'https://assinment-4-backend-eight.vercel.app';
 
 const baseRequest = async (endpoint: string, options: RequestInit = {}) => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
@@ -30,7 +30,7 @@ export const api = {
         login: (credentials: any) => baseRequest('/auth/login', { method: 'POST', body: JSON.stringify(credentials) }),
         register: (userData: any) => baseRequest('/auth/register', { method: 'POST', body: JSON.stringify(userData) }),
         getProfile: (id: string) => baseRequest(`/user/${id}`, { method: 'GET' }),
-        
+
     },
 
     categories: {
@@ -128,6 +128,14 @@ export const api = {
             }),
         removeItemFromCart: (itemId: string) =>
             baseRequest(`/cart/${itemId}`, { method: 'DELETE' }),
-    }
+    },
+    reviews: {
+        getAll: () => baseRequest('/reviews', { method: 'GET' }),
+        post: (data: { medicineId: string; rating: number; comment: string }) =>
+            baseRequest('/reviews', {
+                method: 'POST',
+                body: JSON.stringify(data)
+            }),
+    },
 
 };

@@ -6,10 +6,12 @@ import { motion } from "framer-motion";
 import { api } from "@/src/lib/api";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
+import { useAuth } from "@/src/lib/auth-context";
 
 export default function ProfileLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const [user, setUser] = useState<any>(null);
+    const {getProfile} = useAuth()
 
     const menuItems = [
         { name: "General Info", href: "/profile", icon: User },
@@ -20,7 +22,7 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const res = await api.auth.getProfile();
+                const res = await getProfile();
                 if (res.success) setUser(res.data);
             } catch (err: any) {
                 toast.error("Failed to load profile");

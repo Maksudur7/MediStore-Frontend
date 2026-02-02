@@ -4,10 +4,20 @@ import { useRouter } from "next/navigation";
 import { api } from "./api";
 import { AuthContextType } from "../types";
 
+
+interface User {
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+    image?: string;
+    phone?: string;
+}
+
 const AuthContext = createContext<any>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
 
@@ -22,9 +32,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             const userId = parsedUser.id || parsedUser._id;
 
             if (userId) {
-                api.auth.getProfile(userId) 
+                api.auth.getProfile(userId)
                     .then(res => {
-                        if (res) { 
+                        if (res) {
                             setUser(res);
                             localStorage.setItem("user", JSON.stringify(res));
                         }
@@ -338,12 +348,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             if (!userId) {
                 return { success: false, message: "User ID not found. Please re-login." };
             }
-            const res = await api.auth.updateProfile(userId, formData);
+            const res = await api.users.updateProfile(userId, formData);
             setUser(res);
             return res;
         } catch (err: any) {
             console.error("Update error:", err);
             return { success: false, message: err.message };
+        }
+    };
+
+    const postReview = async (reviewData: any) => {
+        try {
+            const res = await api.reviews.post(reviewData);
+            return res;
+        } catch (err: any) {
+            throw err;
+        }
+    };
+
+    const getReviews = async () => {
+        try {
+            return await api.reviews.getAll();
+        } catch (err) {
+            return [];
         }
     };
 
@@ -378,7 +405,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             removeItemFromCart,
             createOrder,
             getOrderDetails,
-            updateProfile
+            updateProfile,
+            postReview,
+            getReviews
 
         }}>
             {children}
