@@ -81,7 +81,7 @@ export const api = {
             baseRequest('/medicines', { method: 'POST', body: JSON.stringify(medicineData) }),
 
         getById: (id: string) =>
-            baseRequest(`/medicines/${id}`),
+            baseRequest(`/medicines/${id}`, { method: 'GET' }),
 
         getByCategory: (categoryName: string) =>
             baseRequest(`/medicines?category=${categoryName}`),
@@ -96,12 +96,34 @@ export const api = {
 
     orders: {
         getSellerOrders: () =>
-            baseRequest('/orders/seller', { method: 'GET' }),
+            baseRequest('/orders/seller-orders', { method: 'GET' }),
+
+        getCustomerOrder: () =>
+            baseRequest('/orders/my-orders', { method: 'GET' }),
+
         updateOrderStatus: (orderId: string, status: string) =>
             baseRequest(`/orders/${orderId}/status`, {
                 method: 'PATCH',
                 body: JSON.stringify({ status })
             }),
+        createOrder: (orderData: any) =>
+            baseRequest('/orders', { method: 'POST', body: JSON.stringify(orderData) }),
+        getOrderDetails: (id: string) =>
+            baseRequest(`/orders/${id}`, { method: 'GET' }),
     },
+
+    cart: {
+        adToCart: (medicineId: string, quantity: number) =>
+            baseRequest('/cart', { method: 'POST', body: JSON.stringify({ medicineId, quantity }) }),
+        getCart: () =>
+            baseRequest('/cart', { method: 'GET' }),
+        updateCartItem: (itemId: string, quantity: number) =>
+            baseRequest(`/cart/${itemId}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ quantity })
+            }),
+        removeItemFromCart: (itemId: string) =>
+            baseRequest(`/cart/${itemId}`, { method: 'DELETE' }),
+    }
 
 };

@@ -10,18 +10,24 @@ import {
   AlertCircle
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { api } from "@/src/lib/api";
+import { useAuth } from "@/src/lib/auth-context";
+import Link from "next/link";
 
 export default function CustomerOrders() {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const { getMyOrder } = useAuth()
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         setLoading(true);
-        const res = await api.orders.getMyOrders();
-        if (res.success) setOrders(res.data);
+        const res = await getMyOrder();
+        if (Array.isArray(res)) {
+          setOrders(res);
+        } else if (res?.success) {
+          setOrders(res.data || []);
+        }
       } catch (err) {
         console.error("Orders Load Error", err);
       } finally {
@@ -31,7 +37,6 @@ export default function CustomerOrders() {
     fetchOrders();
   }, []);
 
-  // স্ট্যাটাস অনুযায়ী কালার কোড
   const getStatusStyles = (status: string) => {
     switch (status?.toLowerCase()) {
       case 'delivered': return 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20';
@@ -45,7 +50,6 @@ export default function CustomerOrders() {
     <div className="min-h-screen bg-[#050b18] text-white pt-32 pb-20 px-6">
       <div className="max-w-6xl mx-auto">
 
-        {/* --- HEADER --- */}
         <div className="mb-12">
           <motion.div
             initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
@@ -56,7 +60,6 @@ export default function CustomerOrders() {
           <h1 className="text-5xl md:text-6xl font-black tracking-tighter">MY <span className="text-teal-400 font-outline italic">ORDERS.</span></h1>
         </div>
 
-        {/* --- ORDERS LIST --- */}
         <div className="space-y-6">
           {loading ? (
             [1, 2, 3].map(i => (
@@ -68,7 +71,7 @@ export default function CustomerOrders() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.1 }}
-                key={order._id}
+                key={order?.id}
                 className="bg-[#0a192f]/40 border border-white/10 rounded-[40px] p-8 md:p-10 backdrop-blur-xl hover:border-white/20 transition-all group"
               >
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
@@ -77,7 +80,7 @@ export default function CustomerOrders() {
                       {order.status === 'delivered' ? <CheckCircle2 size={28} /> : <Clock size={28} />}
                     </div>
                     <div>
-                      <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-1">Order ID: #{order._id.slice(-8)}</p>
+                      <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-1">Order ID: #{order?.id?.slice(-8)}</p>
                       <h3 className="text-xl font-black mb-1">
                         {order.items?.length} {order.items?.length > 1 ? 'Items' : 'Item'}
                       </h3>
@@ -93,13 +96,15 @@ export default function CustomerOrders() {
                   </div>
 
                   <div className="pt-4 md:pt-0 border-t md:border-t-0 border-white/5 w-full md:w-auto">
-                    <button className="w-full md:w-auto bg-white text-black px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-teal-400 transition-all flex items-center justify-center gap-2">
+                    <Link
+                      href={`/orders/${order.id}`}
+                      className="w-full md:w-auto bg-white text-black px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-teal-400 transition-all flex items-center justify-center gap-2"
+                    >
                       Details <ExternalLink size={14} />
-                    </button>
+                    </Link>
                   </div>
                 </div>
 
-                {/* Summary of items (Optional) */}
                 <div className="mt-8 flex gap-3 overflow-x-auto pb-2">
                   {order.items?.map((item: any, i: number) => (
                     <div key={i} className="bg-white/5 border border-white/5 px-4 py-2 rounded-xl text-[10px] font-bold text-gray-400 whitespace-nowrap">
@@ -110,7 +115,6 @@ export default function CustomerOrders() {
               </motion.div>
             ))
           ) : (
-            /* Empty State */
             <div className="text-center py-24 bg-[#0a192f]/20 border border-dashed border-white/10 rounded-[60px]">
               <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
                 <AlertCircle size={32} className="text-gray-600" />

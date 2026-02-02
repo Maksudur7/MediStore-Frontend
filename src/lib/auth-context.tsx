@@ -199,6 +199,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     };
 
+    const getMedicinesDettles = async (id: string) => {
+        try {
+            const res = await api.medicines.getById(id);
+            return res;
+        }
+        catch (err: any) {
+            console.error("Fetch Medicines Details Error:", err);
+            return null;
+        }
+    };
+
     const updateMedicines = async (id: string, updates: any) => {
         try {
             const res = await api.medicines.update(id, updates);
@@ -231,6 +242,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     };
 
+    const createOrder = async (orderData: any) => {
+        try {
+            const res = await api.orders.createOrder(orderData);
+            return res;
+        }
+        catch (err: any) {
+            console.error("Create Order Error:", err);
+            return null;
+        }
+    };
+
     const updateOrderStatus = async (orderId: string, status: string) => {
         try {
             const res = await api.orders.updateOrderStatus(orderId, status);
@@ -240,6 +262,69 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             return null;
         }
     };
+
+    const getMyOrder = async () => {
+        try {
+            const res = await api.orders.getCustomerOrder();
+            console.log('API Response in Context:', res);
+            return res;
+        } catch (err: any) {
+            console.error("Get my order Error:", err.message);
+            return [];
+        }
+    }
+
+    const getOrderDetails = async (id: string) => {
+        try {
+            const res = await api.orders.getOrderDetails(id);
+            return res;
+        } catch (err: any) {
+            console.error("Get Order Details Error:", err);
+            return null;
+        }
+    }
+
+    const addToCart = async (medicineId: string, quantity: number) => {
+        try {
+            const res = await api.cart.adToCart(medicineId, quantity);
+            return res;
+        } catch (err: any) {
+            console.error("Add to Cart Error:", err);
+            return null;
+        }
+    };
+
+    const getCart = async () => {
+        try {
+            const res = await api.cart.getCart();
+            console.log(res)
+            return res;
+        } catch (err: any) {
+            console.error("Get Cart Error:", err);
+            return null;
+        }
+    };
+
+    const updateCartItem = async (itemId: string, quantity: number) => {
+        try {
+            const res = await api.cart.updateCartItem(itemId, quantity);
+            console.log(res)
+            return res;
+        } catch (err: any) {
+            console.error("Update Cart Item Error:", err);
+            return null;
+        }
+    }
+
+    const removeItemFromCart = async (itemId: string) => {
+        try {
+            const res = await api.cart.removeItemFromCart(itemId);
+            return res;
+        } catch (err: any) {
+            console.error("Delete Cart Item Error:", err);
+            return null;
+        }
+    }
 
     return (
         <AuthContext.Provider value={{
@@ -259,10 +344,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             getSellerStats,
             postMedicine,
             getMedicines,
+            getMedicinesDettles,
             updateMedicines,
             deletMedicines,
             getSellerOrders,
-            updateOrderStatus
+            getMyOrder,
+            updateOrderStatus,
+            addToCart,
+            getCart,
+            updateCartItem,
+            removeItemFromCart,
+            createOrder,
+            getOrderDetails
+
         }}>
             {children}
         </AuthContext.Provider>
