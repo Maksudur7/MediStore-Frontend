@@ -2,6 +2,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "./api";
+import { AuthContextType } from "../types";
 
 const AuthContext = createContext<any>(null);
 
@@ -14,19 +15,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const token = localStorage.getItem("token");
         const savedUser = localStorage.getItem("user");
 
-        if (token) {
-            if (savedUser) {
-                setUser(JSON.parse(savedUser));
+        if (token && savedUser) {
+            const parsedUser = JSON.parse(savedUser);
+            setUser(parsedUser);
+
+            const userId = parsedUser.id || parsedUser._id;
+
+            if (userId) {
+                api.auth.getProfile(userId) 
+                    .then(res => {
+                        if (res) { 
+                            setUser(res);
+                            localStorage.setItem("user", JSON.stringify(res));
+                        }
+                    })
+                    .catch(() => logout())
+                    .finally(() => setLoading(false));
             }
-            api.auth.getProfile()
-                .then(res => {
-                    if (res.success) {
-                        setUser(res.data.user);
-                        localStorage.setItem("user", JSON.stringify(res.data.user));
-                    }
-                })
-                .catch(() => logout())
-                .finally(() => setLoading(false));
         } else {
             setLoading(false);
         }
@@ -326,6 +331,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     }
 
+    const updateProfile = async (formData: any) => {
+        try {
+            const userId = user?.id!
+
+            if (!userId) {
+                return { success: false, message: "User ID not found. Please re-login." };
+            }
+            const res = await api.auth.updateProfile(userId, formData);
+            setUser(res);
+            return res;
+        } catch (err: any) {
+            console.error("Update error:", err);
+            return { success: false, message: err.message };
+        }
+    };
+
+
     return (
         <AuthContext.Provider value={{
             user,
@@ -355,7 +377,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             updateCartItem,
             removeItemFromCart,
             createOrder,
-            getOrderDetails
+            getOrderDetails,
+            updateProfile
 
         }}>
             {children}

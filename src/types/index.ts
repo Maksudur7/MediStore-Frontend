@@ -30,3 +30,14 @@ export interface Order {
     address: string;
     createdAt: Date;
 }
+
+export interface AuthContextType {
+    user: any;
+    loading: boolean;
+    login: (credentials: any) => Promise<any>;
+    register: (userData: any) => Promise<any>;
+    logout: () => void;
+    getProfile: () => Promise<any>;
+    getMyOrder: () => Promise<any>;
+    updateProfile: (formData: any) => Promise<{ success: boolean; message?: string }>;
+}

@@ -27,13 +27,10 @@ const baseRequest = async (endpoint: string, options: RequestInit = {}) => {
 
 export const api = {
     auth: {
-        login: (credentials: any) =>
-            baseRequest('/auth/login', { method: 'POST', body: JSON.stringify(credentials) }),
-
-        register: (userData: any) =>
-            baseRequest('/auth/register', { method: 'POST', body: JSON.stringify(userData) }),
-
-        getProfile: () => baseRequest('/user', { method: 'GET' }),
+        login: (credentials: any) => baseRequest('/auth/login', { method: 'POST', body: JSON.stringify(credentials) }),
+        register: (userData: any) => baseRequest('/auth/register', { method: 'POST', body: JSON.stringify(userData) }),
+        getProfile: (id: string) => baseRequest(`/user/${id}`, { method: 'GET' }),
+        
     },
 
     categories: {
@@ -65,6 +62,13 @@ export const api = {
             }),
         delete: (id: string) =>
             baseRequest(`/user/${id}`, { method: 'DELETE' }),
+
+
+        updateProfile: (id: string, data: any) =>
+            baseRequest(`/user/${id}`, {
+                method: 'PATCH',
+                body: JSON.stringify(data)
+            }),
 
     },
     admin: {
