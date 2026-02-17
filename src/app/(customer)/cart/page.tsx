@@ -7,14 +7,24 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useAuth } from "@/src/lib/auth-context";
 import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export default function CartPage() {
-  const { getCart, updateCartItem, removeItemFromCart, createOrder } = useAuth();
+  const { getCart, updateCartItem, removeItemFromCart, createOrder, user } = useAuth();
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!user) {
+      router.push("/login");
+    }
+  }, [user, router]);
+
 
   const fetchCart = useCallback(async () => {
     try {
+      if (!user) return;
       setLoading(true);
       const res = await getCart();
 
@@ -30,9 +40,9 @@ export default function CartPage() {
     fetchCart();
   }, [fetchCart]);
 
-  const subtotal = cartItems.reduce((acc, item) => {
-    const price = item.medicine?.price || item.price || 0;
-    return acc + (price * item.quantity);
+  const subtotal = cartItems?.reduce((acc, item) => {
+    const price = item?.medicine?.price || item?.price || 0;
+    return acc + (price * item?.quantity);
   }, 0);
 
   const shipping = subtotal > 500 || subtotal === 0 ? 0 : 45;
@@ -42,8 +52,8 @@ export default function CartPage() {
     if (newQty < 1) return;
 
     const originalItems = [...cartItems];
-    setCartItems(prev => prev.map(item =>
-      (item.id === itemId || item._id === itemId) ? { ...item, quantity: newQty } : item
+    setCartItems(prev => prev?.map(item =>
+      (item?.id === itemId || item?._id === itemId) ? { ...item, quantity: newQty } : item
     ));
 
     try {
@@ -52,22 +62,22 @@ export default function CartPage() {
       }
     } catch (err) {
       setCartItems(originalItems);
-      toast.error("Can't update quantity");
+      toast?.error("Can't update quantity");
     }
   };
 
   const handleRemove = async (itemId: string) => {
     const originalItems = [...cartItems];
-    setCartItems(prev => prev.filter(item => (item.id !== itemId && item._id !== itemId)));
+    setCartItems(prev => prev?.filter(item => (item?.id !== itemId && item?._id !== itemId)));
 
     try {
       if (removeItemFromCart) {
         await removeItemFromCart(itemId);
-        toast.success("Item removed from cart");
+        toast?.success("Item removed from cart");
       }
     } catch (err) {
       setCartItems(originalItems);
-      toast.error("Failed to remove item");
+      toast?.error("Failed to remove item");
     }
   };
 
@@ -90,13 +100,13 @@ export default function CartPage() {
           <h1 className="text-5xl md:text-6xl font-black tracking-tighter italic">YOUR <span className="text-teal-400 not-italic">CART.</span></h1>
         </div>
 
-        {cartItems.length > 0 ? (
+        {cartItems?.length > 0 ? (
           <div className="grid lg:grid-cols-3 gap-12">
             <div className="lg:col-span-2 space-y-4">
               <AnimatePresence mode="popLayout">
-                {cartItems.map((item) => {
-                  const id = item.id || item._id;
-                  const medicine = item.medicine || item;
+                {cartItems?.map((item) => {
+                  const id = item?.id || item._id;
+                  const medicine = item?.medicine || item;
                   return (
                     <motion.div
                       layout
@@ -112,20 +122,20 @@ export default function CartPage() {
 
                       <div className="flex-1 text-center md:text-left">
                         <p className="text-[9px] font-black uppercase tracking-widest text-teal-500 mb-1">
-                          {medicine.category?.name || "Medicine"}
+                          {medicine?.category?.name || "Medicine"}
                         </p>
-                        <h3 className="text-xl font-bold mb-1">{medicine.name}</h3>
-                        <p className="text-gray-500 text-sm font-medium">${medicine.price} / unit</p>
+                        <h3 className="text-xl font-bold mb-1">{medicine?.name}</h3>
+                        <p className="text-gray-500 text-sm font-medium">${medicine?.price} / unit</p>
                       </div>
 
                       <div className="flex items-center gap-4 bg-white/5 rounded-2xl p-2 border border-white/5">
-                        <button onClick={() => handleUpdateQty(id, item.quantity - 1)} className="p-2 hover:text-teal-400 transition-colors"><Minus size={16} /></button>
-                        <span className="w-8 text-center font-black">{item.quantity}</span>
-                        <button onClick={() => handleUpdateQty(id, item.quantity + 1)} className="p-2 hover:text-teal-400 transition-colors"><Plus size={16} /></button>
+                        <button onClick={() => handleUpdateQty(id, item?.quantity - 1)} className="p-2 hover:text-teal-400 transition-colors"><Minus size={16} /></button>
+                        <span className="w-8 text-center font-black">{item?.quantity}</span>
+                        <button onClick={() => handleUpdateQty(id, item?.quantity + 1)} className="p-2 hover:text-teal-400 transition-colors"><Plus size={16} /></button>
                       </div>
 
                       <div className="text-right min-w-[100px]">
-                        <p className="text-xl font-black">${((medicine.price || 0) * item.quantity).toFixed(2)}</p>
+                        <p className="text-xl font-black">${((medicine?.price || 0) * item?.quantity).toFixed(2)}</p>
                       </div>
 
                       <button
@@ -146,22 +156,22 @@ export default function CartPage() {
                 <div className="space-y-4 mb-8">
                   <div className="flex justify-between text-gray-400 font-medium">
                     <span>Subtotal</span>
-                    <span className="text-white font-bold">${subtotal.toFixed(2)}</span>
+                    <span className="text-white font-bold">${subtotal?.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-gray-400 font-medium">
                     <span>Shipping</span>
-                    <span className="text-teal-400 font-bold">{shipping === 0 ? "FREE" : `$${shipping.toFixed(2)}`}</span>
+                    <span className="text-teal-400 font-bold">{shipping === 0 ? "FREE" : `$${shipping?.toFixed(2)}`}</span>
                   </div>
                   <div className="h-px bg-white/10 my-4" />
                   <div className="flex justify-between items-end">
                     <span className="text-gray-400 font-bold uppercase text-xs">Total</span>
-                    <span className="text-4xl font-black text-white">${total.toFixed(2)}</span>
+                    <span className="text-4xl font-black text-white">${total?.toFixed(2)}</span>
                   </div>
                 </div>
 
                 <Link
                   href="/checkout"
-                  className={`w-full bg-teal-500 hover:bg-teal-400 text-[#050b18] py-5 rounded-[24px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-3 group ${cartItems.length === 0 ? 'pointer-events-none opacity-50' : ''}`}
+                  className={`w-full bg-teal-500 hover:bg-teal-400 text-[#050b18] py-5 rounded-[24px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-3 group ${cartItems?.length === 0 ? 'pointer-events-none opacity-50' : ''}`}
                 >
                   Proceed to Checkout <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                 </Link>

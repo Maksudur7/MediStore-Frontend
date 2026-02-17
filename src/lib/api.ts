@@ -1,4 +1,5 @@
 const BASE_URL = process.env.BASE_URL || 'https://assinment-4-backend-eight.vercel.app';
+// const BASE_URL = process.env.BASE_URL || 'http://localhost:5000';
 
 const baseRequest = async (endpoint: string, options: RequestInit = {}) => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;

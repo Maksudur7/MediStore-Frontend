@@ -14,7 +14,7 @@ import { toast } from "react-hot-toast";
 import { useAuth } from "@/src/lib/auth-context";
 
 export default function SellerOrders() {
-  const { getSellerOrders, updateOrderStatus } = useAuth(); // Context থেকে ফাংশন আনা হলো
+  const { getSellerOrders, updateOrderStatus } = useAuth(); 
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -57,8 +57,8 @@ export default function SellerOrders() {
   };
 
   const filteredOrders = orders.filter(order => 
-    order._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    order.customerName?.toLowerCase().includes(searchTerm.toLowerCase())
+    order?.id?.toLowerCase()?.includes(searchTerm?.toLowerCase()) ||
+    order?.customerName?.toLowerCase().includes(searchTerm?.toLowerCase())
   );
 
   if (loading) {
@@ -117,7 +117,7 @@ export default function SellerOrders() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05 }}
-                    key={order._id}
+                    key={order.id}
                     className="group hover:bg-white/[0.02] transition-colors"
                   >
                     <td className="px-10 py-6">
@@ -126,8 +126,8 @@ export default function SellerOrders() {
                           <ShoppingBag size={18} />
                         </div>
                         <div>
-                          <p className="font-bold text-sm tracking-tight text-white italic">#{order._id.slice(-6).toUpperCase()}</p>
-                          <p className="text-[10px] text-gray-500 font-bold uppercase">{new Date(order.createdAt).toLocaleDateString()}</p>
+                          <p className="font-bold text-sm tracking-tight text-white italic">#{order?.id?.slice(-6).toUpperCase()}</p>
+                          <p className="text-[10px] text-gray-500 font-bold uppercase">{new Date(order?.createdAt)?.toLocaleDateString()}</p>
                         </div>
                       </div>
                     </td>
@@ -148,7 +148,7 @@ export default function SellerOrders() {
                           <Eye size={16} className="group-hover/btn:scale-110 transition-transform" />
                         </button>
                         <button 
-                          onClick={() => handleUpdateStatus(order._id, 'delivered')}
+                          onClick={() => handleUpdateStatus(order.id, 'delivered')}
                           className="p-3 bg-white/5 border border-white/10 rounded-xl hover:text-emerald-400 hover:border-emerald-500/30 transition-all"
                         >
                           <PackageCheck size={16} />

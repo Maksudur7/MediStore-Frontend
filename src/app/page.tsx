@@ -4,6 +4,7 @@ import { motion, AnimatePresence, Variants } from "framer-motion";
 import { ArrowRight, Pill, Star, Quote, Send, X, ShieldCheck, Truck, Clock, HeartPulse } from "lucide-react";
 import { useAuth } from "@/src/lib/auth-context";
 import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const fadeInUp: Variants = {
     hidden: { opacity: 0, y: 30 },
@@ -27,6 +28,7 @@ export default function HomePage() {
     const [reviews, setReviews] = useState<any[]>([]);
     const [showReviewModal, setShowReviewModal] = useState(false);
     const [loading, setLoading] = useState(false);
+    const router = useRouter();
 
     const [formData, setFormData] = useState({
         medicineId: "",
@@ -46,6 +48,10 @@ export default function HomePage() {
     useEffect(() => {
         fetchReviews();
     }, []);
+
+    const handleExplore = () => {
+        router.push("/shop");
+    }
 
     const handleSubmitReview = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -81,7 +87,7 @@ export default function HomePage() {
                             Order genuine OTC medicines with instant delivery. Your trusted digital apothecary is now just a click away.
                         </motion.p>
                         <motion.div variants={fadeInUp} className="flex gap-5 mt-10">
-                            <button className="bg-white text-black px-10 py-5 rounded-2xl font-bold flex items-center gap-3 hover:bg-teal-400 transition-all shadow-2xl">
+                            <button onClick={()=>handleExplore()} className="bg-white text-black px-10 py-5 rounded-2xl font-bold flex items-center gap-3 hover:bg-teal-400 transition-all shadow-2xl">
                                 Explore Medicines <ArrowRight size={20} />
                             </button>
                             {user && (
@@ -96,8 +102,8 @@ export default function HomePage() {
                     </motion.div>
 
                     <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="relative hidden lg:flex justify-center">
-                        <div className="relative z-10 w-[450px] h-[450px] bg-gradient-to-br from-white/10 to-transparent rounded-[100px] border border-white/20 backdrop-blur-3xl flex items-center justify-center shadow-2xl">
-                            <Pill className="w-48 h-48 text-teal-400 drop-shadow-[0_0_40px_rgba(45,212,191,0.6)]" />
+                        <div >
+                            <img src='/Gemini_Generated_Image_7ouudw7ouudw7ouu.png' alt="Medicine" className="relative z-10 w-[450px] h-[450px] bg-gradient-to-br from-white/10 to-transparent rounded-[100px] border border-white/20 backdrop-blur-3xl flex items-center justify-center shadow-2xl" />
                         </div>
                     </motion.div>
                 </div>
@@ -112,7 +118,7 @@ export default function HomePage() {
                         { icon: <Clock className="text-teal-400" />, title: "24/7 Support", desc: "Pharmacists on call" },
                         { icon: <HeartPulse className="text-teal-400" />, title: "Health First", desc: "Safety verified drugs" }
                     ].map((item, i) => (
-                        <motion.div 
+                        <motion.div
                             key={i}
                             whileHover={{ y: -10 }}
                             className="bg-white/5 border border-white/10 p-8 rounded-3xl backdrop-blur-sm"
@@ -131,7 +137,7 @@ export default function HomePage() {
                     <div className="md:w-1/2 relative">
                         <div className="absolute inset-0 bg-teal-500/20 blur-3xl rounded-full"></div>
                         <div className="relative border border-white/10 p-4 rounded-[40px] bg-white/5 backdrop-blur-md">
-                            <img src="https://images.unsplash.com/photo-1587854692152-cbe660dbbb88?q=80&w=1000&auto=format&fit=crop" alt="Medicine" className="rounded-[30px] w-full object-cover h-[400px]" />
+                            <img src="/Gemini_Generated_Image_7etkce7etkce7etk.png" alt="Medicine" className="rounded-[30px] w-full object-cover h-[400px]" />
                         </div>
                     </div>
                     <div className="md:w-1/2">
@@ -167,7 +173,7 @@ export default function HomePage() {
                                         <Star key={i} size={16} className="fill-teal-400 text-teal-400" />
                                     ))}
                                 </div>
-                                <p className="text-lg mb-6 text-gray-200">"{rev.comment}"</p>
+                                <p className="text-lg mb-6 text-gray-200">{rev.comment}</p>
                                 <div className="flex items-center gap-4 pt-6 border-t border-white/5">
                                     <div className="w-10 h-10 bg-teal-500/20 rounded-full flex items-center justify-center text-teal-400 font-bold uppercase">
                                         {rev.customer?.name?.[0] || "U"}
